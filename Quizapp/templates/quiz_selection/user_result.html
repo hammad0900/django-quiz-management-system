@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js" integrity="sha256-gJWdmuCRBovJMD9D/TVdo4TIK8u5Sti11764sZT1DhI=" crossorigin="anonymous"></script>
+    
+   
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha256-DupmmuWppxPjtcG83ndhh/32A9xDMRFYkGOVzvpfSIk=" crossorigin="anonymous"></script>
+   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+
+function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
+</script>
+</head>
+
+<body style="background-color: gainsboro;">
+  <!-- Navigation bar-->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">quiz<span>ly</span></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+          aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav ml-auto mr-lg-5 mt-2 mt-lg-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'main_page'  %}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href='http://127.0.0.1:8000/#feature'>Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <form class="form-inline">
+              <button class="btn btn-sm btn-outline-primary ml-3" type="button">Quiz</button>
+            </form>
+          </ul>
+        </div>
+      </nav>
+      <!--/ Navigation bar-->
+    <div class="card">
+
+        <div class="card-header">
+         <h4 style="text-align: center;">Overall Results</h4> 
+        </div>
+        <div class="card-body">
+            <div id="printableArea">         
+          
+          <div id="testcase">
+            <h1>Total Time Taken = {{minutes}} : {{seconds}} </h1>
+
+          
+                <h4 style="text-align: center;">Total Marks {{total_marks}} out of {{overall_marks}}</h4> 
+                <h4>Wrong Answers List</h4>
+           {% for key,value in dictionary %}
+           <div class="row" style="background: blueviolet;">
+            <div class="col-sm-6">
+           <h4 style="background: burlywood;">Topic:{{key}}</h4>
+           {% for topic_id,topic_marks_value in topic_marks %}
+           {% if key.id|slugify == topic_id|slugify %}
+           {% for key, value in topic_marks_value.items %}
+           <h4>{{key}} {{value}}</h4>
+           
+    
+           {% endfor %}
+            {% endif %}
+           {% endfor %}
+           {% for questions in value %}
+           {% for k,v in questions.items %}
+           
+           <h4>Question:{{k}}</h4>
+           {% if k.len_flag %}
+          <h4>Correct Answer:{{v}}</h4>
+          {% else %}
+           {% for answer in v %}
+           <h4>{{answer}}</h4>
+           {% endfor %}
+           {% endif %}
+           {% endfor %}
+           {% endfor %}
+          </div>
+           <div class="col-sm-6">
+            <!-- Pie Chart -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Total Score</h6>
+                  
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2">
+                    <canvas id="myPieChart"></canvas>
+                  </div>
+                  <div class="mt-4 text-center small">
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-primary"></i> Questions
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-success"></i> YourScore
+                    </span>
+                   
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+           {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+     <!-- Content Row -->
+     <!-- <div class="card">
+
+        <div class="card-body">
+            <div class="chart">
+                <canvas id="myChart" width="200 !important"></canvas>
+            </div>
+          </div>
+     </div>
+     <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+        <canvas id="chart"></canvas>
+    </div> -->
+
+
+<div class="col-sm-6">
+    <canvas id="canvas"></canvas>
+  </div>
+      <input type="button" onclick="printDiv('printableArea')" value="Generate PDF" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+      <!-- Page level plugins -->
+  <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+  <script>
+    var result_percentage = []
+    var result_questions = []
+    var result_topics=[]
+    '{% for key,value in dictionary %}'
+    '{% for topic_id,topic_marks_value in topic_marks %}'
+           '{% if key.id|slugify == topic_id|slugify %}'
+           var topic_id = '{{topic_id}}'
+           console.log(topic_id)
+          var total_questions = parseInt('{{topic_marks_value.total_questions}}')
+          var correct_ans = '{{topic_marks_value.correct}}'
+          if (correct_ans == ''){
+            correct_ans = 0
+          }
+          else{
+            correct_ans = parseInt(correct_ans)
+          }
+          var percentage = ((correct_ans/total_questions)*100)
+          console.log(total_questions, "THIS IS TOTAL")
+          console.log(correct_ans, "THIS IS correct")
+          console.log(percentage, "THIS IS precen")
+          result_percentage.push(percentage)
+          result_questions.push(total_questions)
+          result_topics.push('{{key}}')
+
+        
+          '{% endif %}'
+           '{% endfor %}'
+           '{% endfor %}'
+
+  // Set new default font family and font color to mimic Bootstrap's default styling
+Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+Chart.defaults.global.defaultFontColor = '#858796';
+
+// Pie Chart Example
+var ctx = document.getElementById("myPieChart");
+var myPieChart = new Chart(ctx, {
+  type: 'doughnut',
+  
+  data: {
+    labels: ["Questions", "YourScore"],
+    datasets: [{
+      data: [2,1],
+      backgroundColor: ['#4e73df', '#1cc88a'],
+      hoverBackgroundColor: ['#2e59d9', '#17a673'],
+      hoverBorderColor: "rgba(234, 236, 244, 1)",
+    }],
+  },
+
+  options: {
+    maintainAspectRatio: false,
+    tooltips: {
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      caretPadding: 10,
+    },
+    legend: {
+      display: false
+    },
+    cutoutPercentage: 80,
+  },
+});
+
+           
+  </script>
+
+
+
+
+
+<script>
+
+
+function number_format(number, decimals, dec_point, thousands_sep) {
+  // *     example: number_format(1234.56, 2, ',', ' ');
+  // *     return: '1 234,56'
+  number = (number + '').replace(',', '').replace(' ', '');
+  var n = !isFinite(+number) ? 0 : +number,
+    prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+    sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+    dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+    s = '',
+    toFixedFix = function(n, prec) {
+      var k = Math.pow(10, prec);
+      return '' + Math.round(n * k) / k;
+    };
+  // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+  if (s[0].length > 3) {
+    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+  }
+  if ((s[1] || '').length < prec) {
+    s[1] = s[1] || '';
+    s[1] += new Array(prec - s[1].length + 1).join('0');
+  }
+  return s.join(dec);
+}
+
+
+
+console.log(result_percentage)
+// Bar Chart Example
+var ctx = document.getElementById("myBarChart");
+var myBarChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: result_topics,
+    datasets: [{
+      label: "Revenue",
+      backgroundColor: "#4e73df",
+      hoverBackgroundColor: "#2e59d9",
+      borderColor: "#4e73df",
+      data: result_percentage,
+    }],
+  },
+  options: {
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 25,
+        top: 25,
+        bottom: 0
+      }
+    },
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'percentage'
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false
+        },
+        ticks: {
+          maxTicksLimit: 6
+        },
+        maxBarThickness: 25,
+      }],
+      yAxes: [{
+        ticks: {
+          min: 0,
+          max: 100,
+          maxTicksLimit: 10,
+          padding: 10,
+          // Include a dollar sign in the ticks
+          callback: function(value, index, values) {
+            return  value;
+          }
+        },
+        gridLines: {
+          color: "rgb(234, 236, 244)",
+          zeroLineColor: "rgb(234, 236, 244)",
+          drawBorder: false,
+          borderDash: [2],
+          zeroLineBorderDash: [2]
+        }
+      }],
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      titleMarginBottom: 10,
+      titleFontColor: '#6e707e',
+      titleFontSize: 14,
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      caretPadding: 10,
+      callbacks: {
+        label: function(tooltipItem, chart) {
+          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+        }
+      }
+    },
+  }
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+<script>
+    var ctx = document.getElementById('myChart');
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        
+        data: {
+            labels: result_topics,
+            datasets: [{
+                label: '# of Votes',
+                data: result_percentage,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                  ticks: {
+                    min: 0,
+                    max: 100,
+                    maxTicksLimit: 10,
+                    padding: 10,
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                      return  value;
+                    }
+                  },
+                }]
+            }
+        }
+    });
+    </script>
+
+
+
+
+
+
+<script>
+
+// fetch data from the percentage array Y-axis
+var dData = function(index) {
+  console.log(result_percentage[index])
+  return result_percentage[index];
+};
+var flag = false;
+var first_label = result_topics
+var first_data= result_percentage
+
+if (result_topics.length > 5){
+    first_label = result_topics.slice(0, 5)
+    first_data = result_percentage.slice(0,5)
+    flag = true;
+}
+console.log(first_data)
+//initilize for 5 bars in the chart
+var index = 5;
+var barChartData = {
+  labels: first_label,
+  datasets: [{
+    fillColor: "rgba(0,60,100,1)",
+    strokeColor: "black",
+    data: first_data
+  }]
+}
+
+var ctx = document.getElementById("canvas").getContext("2d");
+var barChartDemo = new Chart(ctx).Bar(barChartData, {
+  responsive: true,
+  barValueSpacing: 2
+});
+
+setInterval(function() {
+  if(flag){
+    barChartDemo.removeData();
+    barChartDemo.addData([dData(index)], result_topics[index]);
+    //check if index hits the length of the topics array
+    if (index == (result_topics.length - 1))
+    {
+      //restart the loop
+      index = 0;
+    }
+    else{
+      // increment for new bars
+      index++;
+    }
+  }
+}, 3000);
+</script>
+  </body>
+
+</html>

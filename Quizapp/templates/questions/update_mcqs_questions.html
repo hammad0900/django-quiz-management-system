@@ -1,0 +1,98 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<form method="POST" >
+                        {% csrf_token %}
+                        <br>
+                        
+                        <div class="form-group">
+                            <label for="quiz"  >Quiz</label>
+                            <input type="text" name="quizname" class="form-control"   readonly  value="{{quiz}}"   >
+                          </div>
+                                   
+                    
+                            
+                        <input type="text" value="MCQS" name="mcqs"   style="display: none">
+                       
+                        <div class="form-group">
+                                <label for="questions">Question</label>
+                                <textarea class="form-control" id="questions" rows="3" name="question" placeholder="Your Question"   ></textarea>
+                        </div>
+                        {% if picture.url  %}
+                        <h6>Image</h6>
+                        <img src="{{MEDIA_URL}}{{picture.url}}"  style="width:200px;height:80px"/>
+                        <br>
+                        <br>
+                        {% endif %}
+
+                        <div class="form-group">
+                          <label for="marks"  >Marks</label>
+                          <input type="text" name="marks" pattern="[0-9]+" class="form-control"   placeholder="Enter marks"  value="{{marks}}"   >
+                        </div>
+<div class="row">
+<div class="col-sm-12">
+
+     <!-- Table  -->
+     <div class="table-responsive">
+<table class="table table-bordered" >
+        <!-- Table head -->
+        <thead>
+          <tr>
+            <th>
+              <!-- Default unchecked -->
+                <h6>Correct Answers</h6>             
+            </th>
+            <th><h6>Answer Choices</h6> </th>
+          </tr>
+        </thead>
+        <!-- Table head -->
+      
+        <!-- Table body -->
+        <tbody>
+            {% for answer in answerchoice %}
+          <tr id="{{answer.id}}">
+            <th scope="row" class="text-center">
+
+                {% if answer.flag == "False" %}
+              <h1>{{complete_ans.flag}}</h1>  
+                <input type="checkbox" name="checkbox{{forloop.counter}}">
+                {% else %}
+                <h1>{{complete_ans.flag}}</h1>
+                <input type="checkbox" checked name="checkbox{{forloop.counter}}">
+
+                {% endif %}
+
+
+              
+            </th>
+            <td><input type="text" name="textbox"  size="92" style="border: none;background: #f8f9fc;outline: none" placeholder="Enter 1st choice" value="{{answer}}"   ></td>
+          </tr>
+        {% endfor %}
+      
+    </tbody>
+    
+        <!-- Table body -->
+      </table>
+      <!-- Table  -->
+    </div>
+</div>
+
+
+</div>
+                       
+                                          
+                        <input  type="submit" class="btn btn-success" value="Update"> 
+                      </form>
+
+                      <script>
+                      document.getElementById("questions").value='{{question}}'
+                      </script>
+
+
+
+{% endblock %}
+
+
+<script>
+
+</script>

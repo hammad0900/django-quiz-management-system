@@ -1,0 +1,352 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="{% static 'css/quiz_section.css' %}">
+  <title>Quiz</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Quiz Bank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+      aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-sm btn-outline-secondary my-2 my-sm-0" type="submit">Quit Quiz</button>
+      </form>
+    </div>
+  </nav>
+  <div class="container mx-auto my-5" style="max-width: 1000px;">
+    <div class="row">
+      <div class="col-md-9 col-lg-10">
+        <div class="card">
+          <div class="card-header">
+            {% for question in questionsp %}
+            <span style="color: red; float: right">time <span id="timer"></span></span>
+          </div>
+          <div class="card-body">
+            <form method="post" action="." onsubmit="myButton.disabled = true; return true;">
+              {% csrf_token %}
+              <h1></h1>
+              {% if question.question_id.questype == "MCQS" %}
+              {% for answers in answer_choice %}
+              {% if question.id == answers.first.mcqs_id.id %}
+              <h5>{{question}} ?</h5>
+              {% if question.mcq_picture  %}
+              <div class="text-center my-3">
+                <img src="{{MEDIA_URL}}{{question.mcq_picture.url}}" class="img-fluid " style="max-width: 60%;" />
+              </div>
+              {% endif %}
+              <hr>
+              {% for complete_ans in answers %}
+              {% if complete_ans.flag == "True" %}
+
+              <div class="checkbox custom-control custom-checkbox mb-3">
+                <input id="check{{forloop.counter}}" type="checkbox" class="custom-control-input" name="checks[]"
+                  value="{{complete_ans.id}}">
+                <label class="custom-control-label" for="check{{forloop.counter}}">{{complete_ans}}</label>
+              </div>
+              {% else %}
+              <div class="radio custom-control custom-radio">
+                <input type="radio" id="radio_ans{{forloop.counter}}" class="custom-control-input" name="optradio"
+                  value="{{complete_ans.id}}">
+                <label class="custom-control-label" for="radio_ans{{forloop.counter}}">{{complete_ans}}</label>
+              </div>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+
+              {% endfor %}
+              {% else %}
+              <h5>{{question}} ?</h5>
+              <hr>
+              <input type="text" class="form-control col-sm-2" name="input-textbox" id="theory_ans"
+                placeholder="Answer">
+              {% endif %}
+              {% endfor %}
+              <hr>
+
+              <span class="step-links">
+                {% if questionsp.has_next %}
+                <button id="ans_submit" class="btn btn-primary" name="myButton">Next</button>
+                {% else %}
+                <button id="ans_submit" data-is-last="true" style="float: right;"
+                  class="btn btn-success" name="myButton">Submit</button>
+                {% endif %}
+              </span>
+
+            </form>
+
+          </div>
+
+
+        </div>
+      </div>
+      <div class="col-md-3 col-lg-2">
+        <div class="ad">
+          <img src="{% static 'img/googlead.gif'%}" style="max-width: 120px;" alt="">
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+
+
+
+<script>
+document.getElementById("ans_submit").addEventListener("click", myFunction);
+function myFunction() {
+    $.ajax({
+          url: "{% url 'timer'  %}",
+          type: "GET",
+          data: {
+            'timer': document.getElementById('timer').innerHTML
+          },
+          success: function (data) {
+            console.log(data)
+          }, error: function (e) {
+            console.log(e)
+            alert(e.status, e.error);
+          }
+
+        });
+  }
+</script>
+
+  <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+  <script id="template-upload" type="text/javascript">
+  var checkNext = false
+    $(document).ready(function () {
+      '{% for question in questionsp.object_list %}'
+      var id = '{{question.id}}'
+      '{% endfor %}'
+      let question_type = '{{question_type}}'
+      let ans_data = {}
+
+      $("#ans_submit").click(function (e) {
+        e.preventDefault();
+        var isLast = $("#ans_submit").data("is-last");
+        let answer_submitted = []
+        if (question_type == 'theory') {
+          let theory_ans = document.getElementById("theory_ans").value;
+          answer_submitted.push(theory_ans)
+          console.log(theory_ans)
+        }
+        else if (question_type == 'radio') {
+          let radio_ans = $('input[name=optradio]:checked').val();
+          answer_submitted.push(radio_ans)
+          console.log(radio_ans)
+        }
+        else {
+          $(':checkbox:checked').each(function (i) {
+            answer_submitted.push($(this).val())
+          });
+        }
+
+        var answer = {
+          id,
+          answer_submitted: answer_submitted
+        }
+        $.ajax({
+          url: "{% url 'endresult'  %}",
+          type: "POST",
+          data: {
+            'answer': answer
+          },
+          success: function (data) {
+            console.log(data)
+          }, error: function (e) {
+            console.log(e)
+            alert(e.status, e.error);
+          }
+
+        });
+        '{% if questionsp.has_next %}'
+        window.location.href = "?page={{ questionsp.next_page_number }}";
+        '{% else %}'
+        window.location.href = "{% url 'result'  %}";
+        '{% endif %}'
+
+      });
+    }); 
+
+
+  </script>
+
+  <script>
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+    }, false);
+
+    $(document).ready(function () {
+
+      
+      window.addEventListener("load", function() {
+        let now = new Date().getTime();
+        let loadingTime = now - performance.timing.navigationStart;
+        
+        output = "Load time: " + loadingTime + " ms<br/>";
+        output += "Navigation type: ";
+      
+        switch(performance.navigation.type) {
+            case PerformanceNavigation.TYPE_NAVIGATE:
+              output += "Navigation";
+            break;
+          case PerformanceNavigation.TYPE_RELOAD:
+              output += "Reload";
+            break;
+          case PerformanceNavigation.TYPE_BACK_FORWARD:
+              console.log('RELOADING')
+              location.reload(true);
+              output += "History";
+            break;
+          default:
+              output += "Unknown";
+            break;
+        }
+      
+        output += "<br/>Redirects: " + 
+            performance.navigation.redirectCount;
+        console.log(output)
+      }, false);
+        
+    });
+
+  </script>
+
+
+
+<script>
+//   console.log('{{ questionsp.paginator.num_pages }}', 'This is outstanding')
+// console.log('{{current_page_num}}', 'this is current page num')
+
+
+
+
+    console.log(document.querySelector(".result-hit"));
+  var time=0;
+  var time_back = '{{time_per_question}}'
+  console.log(time_back, "This is from back")
+  var minute = Math.floor(time_back/60)
+  var second = Math.floor(time_back%60)
+  console.log(minute,'MINUTES')
+  console.log(second, 'SECONDS')
+  document.getElementById('timer').innerHTML =
+  minute + ":" + second ;
+
+  startTimer();
+
+
+function startTimer() {
+
+  var presentTime = document.getElementById('timer').innerHTML;
+  var timeArray = presentTime.split(/[:]+/);
+  // console.log(timeArray)
+  var m = timeArray[0];
+  var s = parseInt(checkSecond((timeArray[1] - 1)));
+  if(s==59){m=m-1}
+  if(m<0){
+    alert('hey i just ran out of time')
+    '{% for i in range %}'
+      '{% for key, value in all_questions.items %}'
+      '{% if key == i %}'
+        send_ajax('{{value}}')
+      '{% endif %}'
+      '{% endfor %}'
+    '{% endfor %}'
+    window.location.href = "{% url 'result'  %}";
+  }
+  var calcTime = ((m*60)+s).toString();
+  console.log(calcTime)
+  $.ajax({
+        url: "{% url 'timer'  %}",
+        type: "POST",
+        data: {
+          'updated_time': calcTime
+        },
+        success: function (data) {
+          console.log(data)
+          document.getElementById('timer').innerHTML = m + ":" + s;
+        }, error: function (e) {
+          console.log(e)
+          alert(e.status, e.error);
+        }
+
+      });
+  
+  
+  
+  setTimeout(startTimer, 1000);
+}
+
+function checkSecond(sec) {
+  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+  if (sec < 0) {sec = "59"};
+  return sec;
+}
+
+function send_ajax(thisid){
+
+    let question_type = '{{question_type}}'
+    let ans_data = {}
+    let answer_submitted = ['']
+
+      var answer = {
+        id:thisid,
+        answer_submitted: answer_submitted
+      }
+      $.ajax({
+        url: "{% url 'endresult'  %}",
+        type: "POST",
+        data: {
+          'answer': answer
+        },
+        success: function (data) {
+          console.log(data)
+        }, error: function (e) {
+          console.log(e)
+          alert(e.status, e.error);
+        }
+
+      });
+}
+  
+  </script>
+
+
+
+
+
+</body>
+
+</html>

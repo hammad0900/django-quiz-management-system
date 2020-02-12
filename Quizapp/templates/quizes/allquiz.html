@@ -1,0 +1,79 @@
+{% extends 'master.html' %}
+{% block content %}
+<style>
+#myInput {
+  background-image: url('/css/searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+</style>
+<div class="card">
+    <div class="card-header">
+      List of Quizes
+    </div>
+    <div class="card-body">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for quizes.." title="Type in a name">
+<div class="table-responsive">
+        <table class="table table-bordered" id="myTable">
+          <thead class="text-center">
+            <tr>
+              <th>Quiz Name</th>
+              <th>Class</th>
+              <th>Subject</th>
+              <th>Topic</th>
+              <th>Code</th>
+              <th>Created by</th>
+              <th>Actions</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for quiz in quizes %}
+            <tr class="text-center">
+                <td> <a href="{% url 'questions_details' id=quiz.id %}">{{quiz.name}}</a>  </td>
+                <td>{{quiz.Class}}</td>
+                <td>{{quiz.subject}}</td>
+                <td>{{quiz.topic.name}}</td>
+                <td>{{quiz.code}}</td>
+                <td>{{quiz.created_by}}</td>
+
+                
+
+                <td><a href="{% url 'quiz_update' id=quiz.id  %}"><i class="fa fa-edit"> </i></a> <a href="{% url 'quiz_delete' id=quiz.id  %}"> <span style="margin-left: 20%;"><i class="fa fa-trash"> </i></span></a> </td>
+    
+    
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    </div>
+    </div>
+    
+
+    <script>
+        function myFunction() {
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("myInput");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("myTable");
+          tr = table.getElementsByTagName("tr");
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }       
+          }
+        }
+        </script>
+{% endblock %}

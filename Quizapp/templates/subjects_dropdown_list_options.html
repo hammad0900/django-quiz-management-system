@@ -1,0 +1,8 @@
+{% if  subjects%}
+<option selected="false" value="-1" disabled>Select Subject</option>
+{% for subject in subjects %}
+<option value="{{subject.id}}" >{{ subject }}</option>
+{% endfor %}
+{% else %}
+-1
+{% endif %}

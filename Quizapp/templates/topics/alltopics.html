@@ -1,0 +1,73 @@
+{% extends 'master.html' %}
+
+
+    {% block content %}
+    <style>
+        #myInput {
+          background-image: url('/css/searchicon.png');
+          background-position: 10px 10px;
+          background-repeat: no-repeat;
+          width: 100%;
+          font-size: 16px;
+          padding: 12px 20px 12px 40px;
+          border: 1px solid #ddd;
+          margin-bottom: 12px;
+        }
+        </style>
+
+    <div class="card">
+        <div class="card-header">
+          List of Topics
+        </div>
+        <div class="card-body">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for topics.." title="Type in a name">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="myTable">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Topic Name</th>
+                      <th>Topic Code</th>
+                      <th>Subject of topic</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for topic in topics %}
+                    <tr class="text-center">
+                        <td>{{topic.name}}</td>
+                        <td>{{topic.code}}</td>
+                        <td>{{topic.Sub_id}}</td>
+                        <td><a href="{% url 'particulartopic' id=topic.id %}"><i class="fa fa-edit"> </i></a> <a href="{% url 'delete_topic' id=topic.id %}"> <span style="margin-left: 20%;"><i class="fa fa-trash"> </i></span></a> </td>
+            
+            
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+      <script>
+          function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+              td = tr[i].getElementsByTagName("td")[0];
+              if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                  tr[i].style.display = "";
+                } else {
+                  tr[i].style.display = "none";
+                }
+              }       
+            }
+          }
+          </script>
+    {% endblock %}
+
+
+    

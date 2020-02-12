@@ -1,0 +1,22 @@
+{% extends 'master.html' %}
+{% load rest_framework %}
+{% block content %}
+<div class="container" style="margin-bottom: 10%">
+<div class="card" >
+<h5 class="card-header" >Add Class</h5>
+<div class="card-body">
+        <form class="form-hozizontal" method="POST"  class="panel-body">
+                {% csrf_token %}
+                {% render_form serializer  %}
+                <input type="submit" class="btn btn-primary" name="myButton" value="Save">
+        </form>
+</div>
+</div>
+</div>
+
+<script>
+window.onload=function(){
+        $("input[name='code']").val('{{token}}');
+};
+</script>
+{% endblock %}

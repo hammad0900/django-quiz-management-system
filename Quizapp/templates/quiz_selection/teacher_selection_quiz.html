@@ -1,0 +1,426 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+                integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+                crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+                integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+        <title>Document</title>
+</head>
+
+<body>
+        <!-- Navigation bar-->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light mb-5" style="position: relative">
+                <a class="navbar-brand" href="index.html">quiz<span>ly</span></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+                        aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                        <ul class="navbar-nav ml-auto mr-lg-5 mt-2 mt-lg-0">
+                                <li class="nav-item active">
+                                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" href="#feature">Features</a>
+                                </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <form class="form-inline">
+                                        <button class="btn btn-sm btn-outline-primary ml-3" type="button">Quiz</button>
+                                </form>
+                        </ul>
+                </div>
+        </nav>
+        <!--/ Navigation bar-->
+        <div class="container">
+                <form method="POST" id="insert_form">
+                        {% csrf_token %}
+                        <div class="card col-md-12 col-lg-10 mb-5 p-0 mx-auto">
+                                <div class="card-header">
+                                        <h4 style="display: inline;">Take Quiz</h4>
+                                        <a href="" class="btn btn-warning" style="float: right;">Reset</a>
+                                </div>
+                                <div class="card-body">
+                                        <span id="error"></span>
+                                        <div class="row">
+                                                <div class="col-md-4 my-2">
+                                                        <h5>Class</h5>
+                                                        <select class="form-control" required name="Class">
+                                                                <option selected="false" value="-1" disabled>Select
+                                                                        Class</option>
+                                                                {% for class_id in class %}
+
+                                                                <option value={{class_id.id}}>{{class_id}}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                </div>
+                                                <div class="col-md-6 my-2">
+                                                        <h5>Subject</h5>
+                                                        <select class="form-control" required disabled name="subject">
+                                                                <option selected="false" value="-1" disabled>Select
+                                                                        Subject</option>
+                                                                {% for sub_id in subject %}
+                                                                <option value={{sub_id.id}}>{{sub_id}}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                </div>
+                                                <div class="col-md-2 my-2">
+                                                        <h5>Time </h5>
+                                                        <input class="form-control" name="timeperquestion" type="number"
+                                                                placeholder="5-50" required min="1" max="50">
+                                                </div>
+                                        </div>
+
+                                        <div class="my-2">
+                                                <div class="row clearfix">
+                                                        <div class="col-md-12 column">
+                                                                <div class="table-responsive-sm table-responsive-md">
+                                                                        <table class="table table-bordered table-hover">
+                                                                                <thead>
+                                                                                        <tr>
+                                                                                                <th class="text-center"
+                                                                                                        style="width: 7%;  min-width: 50px;">
+                                                                                                        #
+                                                                                                </th>
+                                                                                                <th class="text-center"
+                                                                                                        style="width: 90%;  min-width: 300px;">
+                                                                                                        Topic
+                                                                                                </th>
+                                                                                                <th class="text-center"
+                                                                                                        style="width: 23%; min-width: 150px;">
+                                                                                                        No of Mcqs
+                                                                                                </th>
+                                                                                        </tr>
+                                                                                </thead>
+                                                                                <tbody id="tab_logic">
+                                                                                        <tr>
+                                                                                                <td colspan="3"
+                                                                                                        class="text-center">
+                                                                                                        Please select
+                                                                                                        Subject first
+                                                                                                </td>
+                                                                                        </tr>
+                                                                                </tbody>
+                                                                        </table>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <div class="row mt-2 px-3">
+                                                        <a id="add_row"
+                                                                style="cursor: pointer; float:right; background: rgb(0, 175, 93); margin: 5px; padding: 5px 10px; border-radius: 5px; color: white;"><i
+                                                                        class="fas fa-plus"></i></a>
+
+                                                        <a id='delete_row'
+                                                                style="cursor: pointer; float:right; background: rgb(175, 0, 0); margin: 5px; padding: 5px 10px; border-radius: 5px; color: white;"><i
+                                                                        class="fas fa-trash-alt"></i></a>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="card-footer">
+                                        <input type="submit" class="btn btn-success" style="float: right;">
+                                </div>
+                        </div>
+                </form>
+        </div>
+
+        </div>
+        <!--Footer-->
+        <section id="footer">
+                <div class="container">
+                        <div class="row text-center text-xs-center text-sm-left text-md-left">
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <h5>Quick links</h5>
+                                        <ul class="list-unstyled quick-links">
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Home</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>About</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>FAQ</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Get
+                                                                Started</a></li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Videos</a>
+                                                </li>
+                                        </ul>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <h5>Quick links</h5>
+                                        <ul class="list-unstyled quick-links">
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Home</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>About</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>FAQ</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Get
+                                                                Started</a></li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Videos</a>
+                                                </li>
+                                        </ul>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <h5>Quick links</h5>
+                                        <ul class="list-unstyled quick-links">
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Home</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>About</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>FAQ</a>
+                                                </li>
+                                                <li><a href="javascript:void();"><i
+                                                                        class="fa fa-angle-double-right"></i>Get
+                                                                Started</a></li>
+                                                <li><a href="https://wwwe.sunlimetech.com"
+                                                                title="Design and developed by"><i
+                                                                        class="fa fa-angle-double-right"></i>Imprint</a>
+                                                </li>
+                                        </ul>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
+                                        <ul class="list-unstyled list-inline social text-center">
+                                                <li class="list-inline-item"><a href="javascript:void();"><i
+                                                                        class="fa fa-facebook"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript:void();"><i
+                                                                        class="fa fa-twitter"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript:void();"><i
+                                                                        class="fa fa-instagram"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript:void();"><i
+                                                                        class="fa fa-google-plus"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript:void();"
+                                                                target="_blank"><i class="fa fa-envelope"></i></a></li>
+                                        </ul>
+                                </div>
+                                </hr>
+                        </div>
+                        <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
+                                        <p><u><a href="https://www.nationaltransaction.com/">National Transaction
+                                                                Corporation</a></u> is a Registered MSP/ISO of Elavon,
+                                                Inc. Georgia [a wholly owned subsidiary of U.S. Bancorp, Minneapolis,
+                                                MN]</p>
+                                        <p class="h6">&copy All right Reversed.<a class="text-green ml-2"
+                                                        href="https://www.sunlimetech.com"
+                                                        target="_blank">Sunlimetech</a></p>
+                                </div>
+                                </hr>
+                        </div>
+                </div>
+        </section>
+        <!-- ./Footer -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        <script>
+                $('select[name="topic0"]').change(function () {
+                        var url = '{% url "quiz_section" %}'
+                        var topicid = $(this).val();
+                        $.ajax({
+                                type: "GET",
+                                url: url,
+                                data: {
+                                        'topic': topicid,
+                                },
+                                success: function (data) {
+
+                                }, error: function (e) {
+                                        alert('an error occured');
+                                }
+                        });
+                });
+
+        </script>
+        <script>
+                $(document).ready(function () {
+                        $('select[name="Class"]').change(function () {
+                                var url = '{% url "load" %}'
+                                var classid = $(this).val();
+                                $.ajax({
+                                        type: "GET",
+                                        url: url,
+                                        data: {
+                                                'classes': classid,
+                                        },
+                                        success: function (data) {
+                                                if (data == -1) {
+                                                        $('select[name="subject"]').html('<option selected="false" value="-1" disabled>Select Subject</option>');
+                                                        $('select[name="subject"]').attr("disabled", "true")
+                                                        $('#tab_logic').html('<tr> <td colspan="3" class="text-center">Please select Subject first</td></tr>');
+                                                }
+                                                else {
+                                                        $('select[name="subject"]').html(data);
+                                                        $('select[name="subject"]').removeAttr("disabled")
+                                                        $('#tab_logic').html('<tr> <td colspan="3" class="text-center">Please select Subject first</td></tr>');
+                                                }
+                                        }, error: function (e) {
+                                                alert('an error occured');
+                                        }
+                                });
+                        });
+
+
+                        $('select[name="subject"]').change(function () {
+                                var url = '{% url "subjectload" %}'
+                                var subjectid = $(this).val();
+
+                                $.ajax({
+                                        type: "GET",
+                                        url: url,
+                                        data: {
+                                                'subjects': subjectid,
+                                        },
+                                        success: function (data) {
+                                                if (data != -1) {
+                                                        $('#tab_logic').html('');
+                                                        $('#tab_logic').append('<tr id="addr"></tr>');
+                                                        $('#addr').html("<td>1</td><td> <select class='form-control' required name='topic0'>{% for topic_id in topic %}<option value='{{topic_id.id}}'>{{topic_id}}</option>{% endfor %}</select> </td><td><input  type='number' name='num0' min='1'  placeholder='Number' required  class='form-control input-md'></td>");
+                                                        $('select[name="topic0"]').html(data);
+                                                }
+                                                else{
+                                                        $('#tab_logic').html('<tr> <td colspan="3" class="text-center">No Topics Available</td></tr>');
+                                                }
+                                        }, error: function (e) {
+                                                alert('an error occured');
+                                        }
+                                });
+                        });
+        })      
+
+        </script>
+        <script>
+                $(document).ready(function () {
+                        var i = 1;
+                        $(document).on('click', '#add_row', function () {
+                                var topic_selected = []
+                                var flag = true
+                                var url = '{% url "subjectload" %}'
+                                var subjectid = $('select[name="subject"]').val();
+                                var topics_list = $('select[name*="topic"]').find(":selected")
+                                var num_mcqs = $('input[name*="num"]');
+                                var all_topics_list = $('select[name*="topic"]')
+
+
+                                
+                                if (topics_list.length == 0) {
+                                        alert('Can not add row')
+                                        return false;
+                                }
+                                topics_list.each(function (topic) {
+                                        if ($(this).val() < 0) {
+                                                alert('Please select previous topics')
+                                                flag = false
+                                                return false
+                                        }
+                                        topic_selected.push($(this).val())
+                                })
+                                num_mcqs.each(function (num_mcq){
+                                        if($(this).val() <= 0){
+                                                alert('Number of Mcqs should be greater than 0')
+                                                flag = false
+                                                return false
+                                        }
+                                })
+                                if (flag) {
+                                        all_topics_list.each(function (topic){
+                                                $(this).children("option").attr("disabled", true)
+                                                $(this).children("option:selected").attr("disabled", false)
+                                        })
+                                        $.ajax({
+                                                type: "GET",
+                                                url: url,
+                                                data: {
+                                                        'subjects': subjectid,
+                                                        'topics_selected[]': topic_selected
+                                                },
+                                                success: function (data) {
+                                                        if (data == -1) {
+                                                                alert('No more data to show')
+                                                        }
+                                                        else {
+                                                                $('#tab_logic').append('<tr id="addr' + i + '"></tr>');
+                                                                $('#addr' + i).html("<td>" + (i + 1) + "</td><td> <select class='form-control' required name='topic" + i + "'>{% for topic_id in topic %}<option value='{{topic_id.id}}'>{{topic_id}}</option>{% endfor %}</select> </td><td><input  type='number' name='num" + i + "' min='1'  placeholder='Number' required  class='form-control input-md'></td>");
+                                                                $('select[name="topic' + i + '"]').html(data)
+                                                                i++;
+                                                        }
+                                                }, error: function (e) {
+                                                        alert('an error occured');
+                                                }
+                                        });
+                                }
+                        })
+
+                        $("#delete_row").click(function () {
+                                if (i > 1) {
+                                        $("#addr" + (i - 1)).html('');
+                                        i--;
+                                }
+                        });
+
+                });
+        </script>
+
+
+        <script>
+                $(document).ready(function () {
+
+                        $('form').submit(function (e) {
+                                e.preventDefault();
+                                flag = true
+                                var topics_list = $('select[name*="topic"]').find(":selected")
+                                topics_list.each(function (topic) {
+                                        if ($(this).val() < 0) {
+                                                alert('Please select all Topics')
+                                                flag = false
+                                                return false
+                                        }
+                                })
+
+                                if(flag){
+                                        var form_data = $(this).serialize();
+                                        $.ajax({
+                                                url: '{% url "quiz_section" %}',
+                                                method: "POST",
+                                                data: form_data,
+                                                success: function (data) {
+                                                        $('#item_table').find("tr:gt(0)").remove();
+                                                        location.href = '{% url "conduct_quiz" %}'
+                                                }
+                                        });
+                                }
+                        })
+                });
+        </script>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
+</body>
+
+</html>

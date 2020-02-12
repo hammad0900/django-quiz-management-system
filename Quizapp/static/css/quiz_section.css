@@ -1,0 +1,8 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+
+script#template-upload {
+    display: none;
+}

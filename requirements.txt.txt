@@ -1,0 +1,4 @@
+python 3.7.1
+pip install mysqlclient-1.4.6-cp37-cp37m-win32.whl
+pip install Django==2.2
+pip install django-rest-framework

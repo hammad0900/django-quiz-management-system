@@ -1,0 +1,67 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<style>
+    #myInput {
+      background-image: url('/css/searchicon.png');
+      background-position: 10px 10px;
+      background-repeat: no-repeat;
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
+    </style>
+<div class="card">
+    <div class="card-header">
+      Manage Mcqs
+    </div>
+    <div class="card-body">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for question.." title="Type in a name">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="myTable">
+              <thead class="text-center">
+                <tr>
+                  <th>Question</th>
+                  <th>Question Type</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                  
+                {% for mcqs in mcqs_list %}
+                <tr class="text-center">
+                    <td>{{mcqs.mcq_question}}</td>
+                    <td>{{mcqs.question_id}}</td>
+                    <td><a href="{% url 'update_manage_questions_mcqs' id=mcqs.id %}"><i class="fa fa-edit"> </i></a> <a href="{% url 'delete_manage_questions_mcqs' id=mcqs.id %}"> <span style="margin-left: 20%;"><i class="fa fa-trash"> </i></span></a> </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+    </div>
+    </div>
+  </div>
+
+  <script>
+      function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }       
+        }
+      }
+      </script>       
+
+{% endblock  %}

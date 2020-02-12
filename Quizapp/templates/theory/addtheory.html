@@ -1,0 +1,15 @@
+{% extends 'master.html' %}
+{% load rest_framework %}
+{% block content %}
+        
+<div class="card">
+<h5 class="card-header">Add Theory</h5>
+<div class="card-body">
+        <form class="form-hozizontal" method="POST" class="panel-body">
+                {% csrf_token %}
+                {% render_form serializer  %}
+                <input type="submit" class="btn btn-primary" value="Save">
+        </form>
+</div>
+</div>
+{% endblock %}

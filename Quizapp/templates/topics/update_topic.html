@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if error %}
+{{ error }}
+{% endif %}
+
+<style> 
+        input[type=text] {
+          color: #6e707e;
+          width: 100%;
+          padding: 8px 20px;
+          border-color: #d1d3e2;
+          border-style: solid;
+          border-radius: 5px;
+          border-width: thin;
+        }
+        #id_Sub_id
+        {
+          color: #6e707e;
+            width: 100%;
+          padding: 8px 20px;
+          border-color: #d1d3e2;
+          border-style: solid;
+          border-radius: 5px;
+          border-width: thin;
+        }
+</style>
+
+
+<div class="container" style="margin-bottom: 10%;">
+<div class="card">
+    <h5 class="card-header">Update Topic</h5>
+    <div class="card-body">
+            <form class="form-hozizontal" method="POST" class="panel-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-primary" value="Save">
+            </form>
+    </div>
+    </div>
+</div>
+{% endblock %}

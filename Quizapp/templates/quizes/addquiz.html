@@ -1,0 +1,81 @@
+{% extends 'master.html' %}
+{% load rest_framework %}
+{% block content %}
+
+<div class="container-fluid">
+<div class="card">
+<div class="card-header">Add Quiz</div>
+<div class="card-body">
+        
+        <form class="form-hozizontal" method="POST"  class="panel-body">
+
+                {% csrf_token %}
+                {% render_form serializer %}
+                <input type="submit" class="btn btn-primary " id="submit_btn"  value="Save">
+                
+        </form>
+<br>
+<br>
+</div>
+</div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script> 
+$(document).ready(function(){
+    $('select[name="Class"]').change(function(){    
+    var  url = '{% url "load" %}'
+    var classid = $(this).val();
+    $.ajax({    
+        type: "GET",                   
+        url: url,                   
+        data: {
+          'classes': classid,       
+        }, 
+        success: function (data) {   
+        console.log(data)
+        $('select[name="subject"]').html(data); 
+        },error : function(e) { 
+        alert('an error occured');
+        }
+        });
+});
+
+
+$('select[name="subject"]').change(function(){    
+        var  url = '{% url "subjectload" %}'
+        var subjectid = $(this).val();
+        console.log(subjectid)
+        $.ajax({    
+        type: "GET",                   
+        url: url,                   
+        data: {
+        'subjects': subjectid,       
+        },
+        success: function (data) {   
+        $('select[name="topic"]').html(data); 
+        },error : function(e) { 
+        alert('an error occured');
+        }
+        });
+});
+
+}) 
+window.onload=function(){
+        $("input[name='created_by']").val('{{request.user}}');
+        $("select[name='Class']").val('------------');
+        $("select[name='subject']").val('------------');
+        $("select[name='topic']").val('------------');
+
+        $("input[name='code']").val('{{token}}');
+
+        
+
+
+};
+</script>
+
+
+
+{% endblock %}

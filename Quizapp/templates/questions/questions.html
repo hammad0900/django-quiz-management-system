@@ -1,0 +1,199 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+
+{% block content %}
+{% load rest_framework %}
+
+
+
+
+<div class="container " >
+    <div class="card">
+        <div class="card-header">Add Quiz</div>
+        <div class="card-body">
+  
+    <div class="row " >
+        <div class="col-md-12">
+            <ul class="nav nav-tabs r" id="myTab" role="tablist" >
+                <li class="nav-item">
+                  <a class="nav-link active"  id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" > MCQS </a>
+                
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" >Theory</a>
+                </li>
+                
+              </ul>
+              <div class="tab-content " id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <br>
+                                            <div class="form-group " >
+                                                    <label for="quizid" >Select Quiz</label>
+                                                    <select class="form-control" name="quizname" id="quizid"  required>
+                                                      {% for quizin in quiz %}
+                                                       <option value="{{quizin.id}}" >{{quizin.name}}</option>
+                                                      {% endfor %}
+                                                    </select>
+                                                  </div>
+                                   
+                    
+                            
+                        <input type="text" value="MCQS" name="mcqs"   style="display: none">
+                            
+                       
+                        <div class="form-group">
+                                <label for="pic">Add Picture</label>
+                                <input type="file" name="myfile" >
+                        </div>
+                        <div class="form-group">
+                            <label for="questions"></label>
+                            <textarea class="form-control" id="questions" rows="3" name="question"  placeholder="Your Question" required></textarea>
+                       </div>
+                        <div class="form-group">
+                          <label for="marks"  >Marks</label>
+                          <input type="number" name="marks" pattern="[0-9]+" class="form-control"   placeholder="Enter marks" required>
+                        </div>
+<div class="row">
+<div class="col-sm-12">
+
+     <!-- Table  -->
+     <div class="table-responsive">
+<table class="table table-bordered" >
+        <!-- Table head -->
+        <thead>
+          <tr>
+            <th>
+              <!-- Default unchecked -->
+                <h6>Correct Answers</h6>             
+            </th>
+            <th><h6>Answer Choices</h6> </th>
+          </tr>
+        </thead>
+        <!-- Table head -->
+      
+        <!-- Table body -->
+        <tbody>
+          <tr>
+            <th scope="row" class="text-center">
+              <!-- Default unchecked -->
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="checkbox1"   id="tableDefaultCheck2" checked>
+                <label class="custom-control-label"  for="tableDefaultCheck2" ></label>
+              </div>
+            </th>
+            <td><input type="text" name="textbox1"  size="92" style="border: none;outline: none" placeholder="Enter 1st choice"  required></td>
+          </tr>
+          <tr>
+            <th scope="row" class="text-center">
+              <!-- Default unchecked -->
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" name="checkbox2" class="custom-control-input" id="tableDefaultCheck3" >
+                <label class="custom-control-label"  for="tableDefaultCheck3"></label>
+              </div>
+            </th>
+            <td ><input type="text" name="textbox2"  size="92" style="border: none;outline: none" placeholder="Enter 2nd choice" required></td>
+          </tr>
+          <tr>
+            <th scope="row" class="text-center">
+              <!-- Default unchecked -->
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" name="checkbox3"  class="custom-control-input" id="tableDefaultCheck4">
+                <label class="custom-control-label"  for="tableDefaultCheck4"></label>
+              </div>
+            </th>
+            <td><input type="text" name="textbox3"  size="92" style="border: none;outline: none" placeholder="Enter 3rd choice" required></td>
+          </tr>
+          <tr>
+              <th scope="row" class="text-center">
+                <!-- Default unchecked -->
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" name="checkbox4"  class="custom-control-input" id="tableDefaultCheck5">
+                  <label class="custom-control-label"  for="tableDefaultCheck5"></label>
+                </div>
+              </th>
+              <td><input type="text" name="textbox4"  size="92" style="border: none;outline: none" placeholder="Enter 4th choice" required></td>
+            </tr>
+            <tr>
+                <th scope="row" class="text-center">
+                  <!-- Default unchecked -->
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" name="checkbox5"  class="custom-control-input" id="tableDefaultCheck6">
+                    <label class="custom-control-label"  for="tableDefaultCheck6"></label>
+                  </div>
+                </th>
+                <td><input type="text" name="textbox5"  size="92" style="border: none;outline: none" placeholder="Enter 5th choice" ></td>
+              </tr>
+              <tr>
+                  <th scope="row" class="text-center">
+                    <!-- Default unchecked -->
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" name="checkbox6"  class="custom-control-input" id="tableDefaultCheck7">
+                      <label class="custom-control-label"  for="tableDefaultCheck7"></label>
+                    </div>
+                  </th>
+                  <td><input type="text" name="textbox6"  size="92" style="border: none;outline: none" placeholder="Enter 6th choice" ></td>
+                </tr>
+        </tbody>
+        <!-- Table body -->
+      </table>
+      <!-- Table  -->
+    </div>
+</div>
+
+
+</div>
+                       
+                                          
+                        <input  type="submit" class="btn btn-success" > 
+                      </form>
+                  
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                  <br>
+                  <form method='POST' enctype="multipart/form-data">
+                    {% csrf_token %}
+                  <div class="row">
+                    <div class="col-sm-12 ">
+                            <div class="form-group " >
+                                    <label for="quizid" >Select Quiz</label>
+                                    <select class="form-control" name="theoryquizname" id="quizid"  required>
+                                      {% for quizin in quiz %}
+                                       <option value="{{quizin.id}}">{{quizin.name}}</option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                    </div>
+                  </div>
+                  <input type="text" value="Theory" name="theory"   style="display: none">
+
+                  <div class="form-group">
+                    <label for="questions">Questions</label>
+                    <textarea class="form-control" id="questions" rows="3" name="theoryquestion" placeholder="Your Question" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="pic">Add Picture</label>
+                    <input type="file" name="myfile" >
+                </div>
+                <div class="form-group">
+                  <label for="marks">Marks</label>
+                  <input type="text"  name="theorymarks" pattern="[0-9]+" class="form-control"   placeholder="Enter marks"   required>
+                </div>
+                <div class="form-group">
+                  <label for="marks">Correct Answer</label>
+                  <input type="text" name="theorycorrect" class="form-control"   placeholder="Enter Correct Answer" required>
+                </div>
+                <input type="submit" class="btn btn-success" >
+                </form>
+
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    
+
+{% endblock %}

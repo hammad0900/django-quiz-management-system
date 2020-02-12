@@ -1,0 +1,10 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="content-wrapper">
+<ul>
+{% for mcq in mcqs %}
+<li>{{mcq}}</li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}

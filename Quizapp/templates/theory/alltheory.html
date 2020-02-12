@@ -1,0 +1,10 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="content-wrapper">
+<ul>
+{% for theory in theories %}
+<li>{{theory}}</li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}

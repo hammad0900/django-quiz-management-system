@@ -1,0 +1,100 @@
+{% extends 'master.html' %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if error %}
+{{ error }}
+{% endif %}
+
+
+<style> 
+        input[type=text] {
+          color: #6e707e;
+          width: 100%;
+          padding: 8px 20px;
+          border-color: #d1d3e2;
+          border-style: solid;
+          border-radius: 5px;
+          border-width: thin;
+        }
+        #id_Class,#id_subject,#id_topic
+        {
+          color: #6e707e;
+            width: 100%;
+          padding: 8px 20px;
+          border-color: #d1d3e2;
+          border-style: solid;
+          border-radius: 5px;
+          border-width: thin;
+        }
+</style>
+
+
+<div class="card">
+    <div class="card-header">Update Quiz</div>
+    <div class="card-body">
+            <form class="form-hozizontal" method="POST" class="panel-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-primary" value="Save">
+            </form>
+    </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>   
+<script> 
+$(document).ready(function(){
+    $('select[name="Class"]').change(function(){    
+    var  url = '{% url "load" %}'
+    var classid = $(this).val();
+    $.ajax({    
+        type: "GET",                   
+        url: url,                   
+        data: {
+          'classes': classid,       
+        }, 
+        success: function (data) {   
+        console.log(data)
+        $('select[name="subject"]').html(data); 
+        },error : function(e) { 
+        alert('an error occured');
+        }
+        });
+});
+
+
+$('select[name="subject"]').change(function(){    
+        var  url = '{% url "subjectload" %}'
+        var subjectid = $(this).val();
+        console.log(subjectid)
+        $.ajax({    
+        type: "GET",                   
+        url: url,                   
+        data: {
+        'subjects': subjectid,       
+        },
+        success: function (data) {   
+        $('select[name="topic"]').html(data); 
+        },error : function(e) { 
+        alert('an error occured');
+        }
+        });
+});
+
+
+
+
+
+}) 
+
+</script>
+{% endblock %}

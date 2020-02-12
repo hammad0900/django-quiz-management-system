@@ -1,0 +1,8 @@
+{% if  topics%}
+<option value="-1" selected="false" disabled>Select Topic</option>
+{% for topic in topics %}
+<option value="{{topic.id}}">{{ topic }}</option>
+{% endfor %}
+{% else %}
+-1
+{% endif %}

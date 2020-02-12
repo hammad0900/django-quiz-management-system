@@ -1,0 +1,70 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% block content %}
+{% load rest_framework %}
+<style>
+    #myInput {
+      background-image: url('/css/searchicon.png');
+      background-position: 10px 10px;
+      background-repeat: no-repeat;
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
+    </style>
+<div class="card">
+  <form method="post">
+        <div class="card-header">
+          Manage Theory
+        </div>
+        <div class="card-body">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for question.." title="Type in a name">
+                <div class="table-responsive">
+                        <table class="table table-bordered" id="myTable">
+                          <thead class="text-center">
+                            <tr>
+                              <th>Question</th>
+                              <th>Correct Answer</th>
+                              <th>Question Type</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              
+                            {% for theory in theory_list %}
+                            <tr class="text-center">
+                                <td>{{theory.theory_question}}</td>
+                                <td>{{theory.correct_ans}}</td>
+                                <td>{{theory.question_id}}</td>
+                                <td><a href="{% url 'update_question' id=theory.id   %}"><i class="fa fa-edit"> </i></a> <a href="{% url 'delete_theory_question' id=theory.id %}"> <span style="margin-left: 20%;"><i class="fa fa-trash"> </i></span></a> </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                </div>
+        </div>
+      </form>
+</div>
+<script>
+    function myFunction() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }       
+      }
+    }
+    </script>
+{% endblock %}
