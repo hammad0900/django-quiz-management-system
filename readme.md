@@ -3,3 +3,6 @@
 2:Admin can make quiz questions<br>
 3:Quiz can be of MCQS or Theory Both<br>
 4:User can give quiz and have a timer on the quiz<br>
+5:User will have the quiz result at the end <br>
+
+
